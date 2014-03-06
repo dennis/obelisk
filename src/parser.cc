@@ -9,6 +9,9 @@
 
 #include "parser.h"
 
+Parser::Parser() : pregInitialized(false) {
+}
+
 ParsedFile::parsed_file_ptr Parser::parse(std::istream& instream) {
 	ParsedFile::parsed_file_ptr parsedFile = ParsedFile::parsed_file_ptr(new ParsedFile());
 	std::string line;
@@ -31,12 +34,16 @@ void Parser::parseLine(std::string& line, ParsedFile::parsed_file_ptr parsedFile
 	// 6 = channel id
 	int res;
 
-	if((res = regcomp(&preg, "\\[([^\\[]+)\\][ ]+\\-\\- Executing \\[([^@]+)@([^:]+):([0-9]+)\\] ([^\\(]+)\\(\"([^\"]+)", REG_EXTENDED)) != 0) {
-		char error[BUFSIZ];
-		regerror(res, &preg, error, BUFSIZ);
-		std::cerr << error << std::endl;
-		throw std::string("FUCK");
+	if(!pregInitialized) {
+		if((res = regcomp(&preg, "\\[([^\\[]+)\\][ ]+\\-\\- Executing \\[([^@]+)@([^:]+):([0-9]+)\\] ([^\\(]+)\\(\"([^\"]+)", REG_EXTENDED)) != 0) {
+			char error[BUFSIZ];
+			regerror(res, &preg, error, BUFSIZ);
+			std::cerr << error << std::endl;
+			throw std::string("RegEx compilation failed");
+			pregInitialized = true;
+		}
 	}
+
 
 	if(line.size() < 24) // there isnt even a timestamp. Just ignore it.
 		return;
