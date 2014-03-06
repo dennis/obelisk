@@ -1,12 +1,18 @@
 #include <string>
 #include <sstream>
 #include <algorithm>
+#include <iomanip>
 
 #include "obelisk.h"
 #include "parser.h"
 
-static void showStrings (std::string name) { 
-  std::cout << ' ' << name << std::endl;
+//static void showStrings (std::string name) { 
+static void showStrings (std::pair<std::string, Channel> pair) { 
+  std::cout 
+  	  << " " << pair.second.getTimestamp() 
+  	  << " [" << std::setfill(' ') << std::setw(2) << pair.second.getCount() << "]"
+  	  << " " << pair.first
+  	  << std::endl;
 }
 
 class OnlyShowMatchingLines {

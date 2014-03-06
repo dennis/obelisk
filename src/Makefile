@@ -3,7 +3,7 @@ CXXFLAGS+=-ggdb
 
 all: obelisk
 
-obelisk: main.o obelisk.o parser.o line.o channel_line.o parsed_file.o clause.o
+obelisk: main.o obelisk.o parser.o line.o channel_line.o parsed_file.o clause.o channel.o
 	$(CXX) $? -o $@ $(LDFLAGS)
 
 clean:

@@ -1,16 +1,17 @@
 #ifndef __parsed_file_h__
 #define __parsed_file_h__
 
-#include <set>
+#include <map>
 #include <list>
 #include <string>
 #include <tr1/memory>
 
 #include "line.h"
+#include "channel.h"
 
 class ParsedFile {
 public:
-	typedef std::set<std::string> channels_t;
+	typedef std::map<std::string, Channel> channels_t;
 	typedef std::tr1::shared_ptr<Line> line_ptr;
 	typedef std::list<line_ptr> lines_t;
 
