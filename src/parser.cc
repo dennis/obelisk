@@ -44,7 +44,6 @@ void Parser::parseLine(std::string& line, ParsedFile::parsed_file_ptr parsedFile
 		}
 	}
 
-
 	if(line.size() < 24) // there isnt even a timestamp. Just ignore it.
 		return;
 
@@ -54,8 +53,26 @@ void Parser::parseLine(std::string& line, ParsedFile::parsed_file_ptr parsedFile
 
 	res = regexec(&preg, line.c_str(), 10, pmatch, REG_NOTBOL);
 	if(res == REG_NOMATCH) {
-		std::string timestamp = line.substr(1,23);
-		parsedFile->addLine(timestamp, other);
+		// This line didnt match our regex. As a fallback, determine the known channelids and
+		// see if the line contains one of them. 
+		bool foundChannel = false;
+
+		std::string timestamp = line.substr(1,22);
+
+		ParsedFile::channels_t channels = parsedFile->getChannels();
+		
+		for(ParsedFile::channels_t::iterator i = channels.begin(); i != channels.end(); ++i) {
+			if(line.find(i->first) != std::string::npos) {
+				parsedFile->addChannelLine(timestamp, i->first, other);
+				foundChannel = true;
+				break;
+			}
+		}
+		
+		if(!foundChannel) {
+			// We didnt find any channel matching, fall back to just "line"
+			parsedFile->addLine(timestamp, other);
+		}
 		return;
 	}
 
